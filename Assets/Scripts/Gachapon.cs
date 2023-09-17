@@ -11,6 +11,8 @@ public class Gachapon : MonoBehaviour
     public Transform[] displayArr;
     int displayToggle;
 
+    public Animator crankAnim;
+
     bool inUse = false;
     bool isEmpty = false;
 
@@ -41,29 +43,42 @@ public class Gachapon : MonoBehaviour
             inUse = true;
             GameObject cloneC = (GameObject)Instantiate(CapsuleToy);
             //GameObject cloneT = (GameObject)Instantiate(capsuleArr[CapsuleSelect()]);
-            SpawnDisplay();
+            //SpawnDisplay();
             StartCoroutine(Buffer());
             Destroy(cloneC, delay);
             //Destroy(cloneT, delay);
-            RemoveCapsuleFromPool();
-            EmptyMachineCheck();
+            //RemoveCapsuleFromPool();
+            //EmptyMachineCheck();
         }
 
         if (Input.GetKeyDown(KeyCode.Q)) {
             CameraMove();
         }
 
+        if(CapsuleLeft <= 0)
+        {
+            EmptyMachineCheck();
+        }
+
+        //EmptyMachineCheck();
+
         CapsuleLeftText.text = "Capsules Left: " + CapsuleLeft.ToString();
     }
 
     IEnumerator Buffer()
     {
-        yield return new WaitForSeconds(delay - 0.5f);
+        crankAnim.SetBool("IsActive", true);
+        yield return new WaitForSeconds(0.1f);
+        crankAnim.SetBool("IsActive", false);
+        yield return new WaitForSeconds(delay - 0.4f);
         GameObject cloneT = (GameObject)Instantiate(capsuleArr[CapsuleSelect()]);
         Destroy(cloneT, delay);
-        yield return new WaitForSeconds(delay + 0.2f);
-        inUse = false;
+        yield return new WaitForSeconds(delay);
         CapsuleLeft--;
+        SpawnDisplay();
+        yield return new WaitForSeconds(0.2f);
+        inUse = false;
+        RemoveCapsuleFromPool();
     }
 
     private int CapsuleSelect()
@@ -129,4 +144,5 @@ public class Gachapon : MonoBehaviour
         cloneD.transform.localScale -= new Vector3(0.5f, 0.5f, 0.5f);
         displayToggle++;
     }
+
 }
